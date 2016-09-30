@@ -14,24 +14,24 @@ import lejos.robotics.localization.OdometryPoseProvider;
 import javax.bluetooth.*;
 
 public class radar {
- 
+
      public static void main(String[] args)  throws Exception
      {
           //Bluetooth inicio
           String nombre = "CR5";
 	  LCD.drawString("Conectando?", 2, 1);
 	  LCD.refresh();
-	  
+
 	  LCD.drawString("Pulsa un boton", 2, 1);
 	  Button.waitForAnyPress();
 	  Sound.beep();
-				      
+
 	  LCD.clear();
 	  LCD.drawString("Conectando", 2, 1);
 	  LCD.refresh();
-	  
+
 	  RemoteDevice bt2 = Bluetooth.getKnownDevice(nombre);
-	  
+
 	  if (bt2 == null){
 		  LCD.clear();
 		  LCD.drawString("No existe ese dispositivo", 0, 1);
@@ -39,9 +39,9 @@ public class radar {
 		  Thread.sleep(2000);
 		  System.exit(1);
 		  }
-	  
+
 	  BTConnection btc = Bluetooth.connect(bt2);
-	  
+
 	  if (btc == null){
 		  LCD.clear();
 		  LCD.drawString("Conexión fallida", 1, 1);
@@ -49,35 +49,35 @@ public class radar {
 		  Thread.sleep(2000);
 		  System.exit(1);
 		  }
-	  
-	  
+
+
 	  LCD.clear();
 	  LCD.drawString("Conectado", 2, 1);
 	  LCD.refresh();
-	  
+
 	  DataOutputStream dos = btc.openDataOutputStream();
 	  //Bluetooth fin
-	  
+
           UltrasonicSensor ultra = new UltrasonicSensor(SensorPort.S1);
           DifferentialPilot dp = new DifferentialPilot(56, 300, Motor.B, Motor.C);
 	  OdometryPoseProvider opp = new OdometryPoseProvider(dp); //para dar X,Y avanzados (aun no usado)
-          
+
           //Imprimir en consola (para usar, descomentar todo lo que diga RConsole y seguir las instrucciones)
           //RConsole.openUSB(40000);
           //RConsole.open();
-          
+
           LCD.drawString("Maestro", 0, 0);
-          
+
           //Motor del ultra
           Motor.A.setSpeed(30);
-          
+
 	  // n de victimas/ n de giros/ límite de giros (para empezar la salida)/ posible victima (contador)/ explorar a la derecha o a la izquierda (1 o -1)
 	  int victimas,giros,lim,pv,direc;
 	  int[] forward;// Array que almacena cuanto avanzar (mirar el grafico para entender mejor)
 	  forward = new int[5];
 	  double d,d1,t,tt,ant,nuevo;// variables para descomponer en X,Y el vector dado por el ultra
 	  boolean control1,pw,salida,non_scanned;// variables de control
-	  
+
 	  ant=0;
 	  giros=0;
 	  pv=0;
@@ -91,15 +91,15 @@ public class radar {
 	  forward[4]=0;
 	  giros=0;
 	  direc=1;
-	  
+
 	  //Salir de zona de rescate
 	  dp.travel(-600);//*
 	  dp.rotate(90);//*
 	  //Salir de zona de rescate
-	  
+
 	  while(ultra.getDistance()>10){
-		dp.travel(-100);
-		++forward[0];
+          	dp.travel(-100);
+          	++forward[0];
 	  }
 	  dp.rotate(-90);
 	  dp.travel(300);
@@ -107,11 +107,11 @@ public class radar {
 	  while (Motor.A.getTachoCount()>-45);
 	  Motor.A.stop();
 	  Motor.A.resetTachoCount();
-	  
+
 	  giros=1;
-	  
+
 	  while(true){
-		
+
 		if(salida==false){
 			if(forward[giros]==0 || non_scanned){//Aun no está escaneado
 				non_scanned=true;
@@ -132,7 +132,7 @@ public class radar {
 				    if(d<10){ //Hay algo cerca
 					  //pw=true;
 					  ++pv; //AUmento contador de posibles victimas
-					  
+
 					  //Obtengo X,Y IGNORAR POR AHORA
 					  t=180-Motor.A.getTachoCount()-45;
 					  tt=t*Math.PI/180;// CONVIERTO
@@ -151,7 +151,7 @@ public class radar {
 				}
 				//RConsole.println("\n");
 				Motor.A.stop();
-				
+
 				if (pv<20) { //No es pared
 				  if(pv!=0){ //Es víctima debe abrir la puerta
 					dos.writeInt(0);
@@ -169,12 +169,12 @@ public class radar {
 					dp.travel(100);//*// Retrocede 10 cm
 				  }
 				  ++forward[giros];
-				  
+
 				} else { //Es pared debe girar
 				  dp.rotate(-90 *direc);//*
 				  ++giros;
 				  if(giros==lim) { //Si alcanza el límite de giros, debe empezar la regresada
-				  
+
 					salida=true;
 					dp.rotate(-90 * direc);//* // Giro 90 más y así completo 180
 					dp.travel(300);//*// Se acomoda
@@ -205,7 +205,7 @@ public class radar {
 			//Salida está activada así que recorre el array forward de atras hacia adelante (usando a 'giros' como puntero) para volver por el camino que recorrió
 			--giros;
 			for(;giros>-1; --giros){
-			
+
 				//RConsole.println(""+giros);
 				dp.travel(-forward[giros]*100); //*//avanza lo que almacenó *100 pues debe estar en milímetros
 				if(giros==2) { //Para salir de la zona
@@ -213,7 +213,7 @@ public class radar {
 					dp.rotate(-90 * direc);//*
 					dp.travel(-500);//*
 					dp.rotate(-90);//*
-					
+
 				}
 				else if(giros==0) { //Para dejar los humanitos cerca de la zona de rescate
 					dos.writeInt(0);
@@ -238,10 +238,10 @@ public class radar {
 			giros=0;// Vuelve a empezar su camino
 			salida=false;
 			non_scanned=false;
-		
+
 		}
 	  }
           //Button.waitForAnyPress();
      }
 
-} 
+}
