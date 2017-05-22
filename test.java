@@ -23,60 +23,66 @@ import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3GyroSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.utility.Delay;
+import lejos.robotics.navigation.DifferentialPilot;
 
 public class test {
-	//static EV3LargeRegulatedMotor rightW = new EV3LargeRegulatedMotor(MotorPort.B);
-	//static EV3LargeRegulatedMotor letfW = new EV3LargeRegulatedMotor(MotorPort.A);
+//	static EV3LargeRegulatedMotor rightW = new EV3LargeRegulatedMotor(MotorPort.B);
+//	static EV3LargeRegulatedMotor letfW = new EV3LargeRegulatedMotor(MotorPort.A);
 //	static Wheel leftWheel = WheeledChassis.modelWheel(Motor.A, 42.2).offset(72).gearRatio(2);
 //	static Wheel rightWheel = WheeledChassis.modelWheel(Motor.B, 42.2).offset(-72).gearRatio(2);
 	//static Chassis myChassis = new WheeledChassis( new Wheel[]{leftWheel, rightWheel}, WheeledChassis.TYPE_DIFFERENTIAL);
 //	static MovePilot pilotTest = new MovePilot(myChassis);
 	
-	public static void setAcceleratioBoth(int speed)
-	{
-		//rightW.setAcceleration(speed);
-		//letfW.setAcceleration(speed);
-	}
-	
-	public static void onlyGo()
-	{
-		//rightW.forward();
-		//letfW.forward();
-	}
-	
-	public static void advancedDistance( int distance )
-	{
-	//	pilotTest.travel(distance);
-	}
-	
+//	public static void setAcceleratioBoth(int speed)
+//	{
+//		rightW.setAcceleration(speed);
+//		letfW.setAcceleration(speed);
+//	}
+//	
+//	public static void onlyGo()
+//	{
+//		//rightW.forward();
+//		//letfW.forward();
+//	}
+//	
+//	public static void advancedDistance( int distance )
+//	{
+//	//	pilotTest.travel(distance);
+//	}
+//	
 	//private static EV3LargeRegulatedMotor mb;
 	//private static EV3TouchSensor ts;
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
+//		EV3LargeRegulatedMotor mb = new EV3LargeRegulatedMotor(MotorPort.B) ;
+//		EV3TouchSensor ts = new EV3TouchSensor(SensorPort.S2);
+//		
+//		
+//		int sp = ts.sampleSize();
+//		float [] sample = new float[sp];
+//		ts.fetchSample(sample, 0);
+		
+		DifferentialPilot m_pilot=new DifferentialPilot(1.8 , 4.2 ,Motor.B,Motor.A);
+		EV3GyroSensor gs = new EV3GyroSensor(SensorPort.S1);
+		SampleProvider gyroSamples;
+		float[] sample= { 0.0f };
+		
+		m_pilot.rotate(90);
+		
+		
+		
+		   gyroSamples = gs.getAngleMode();
+		   gyroSamples.fetchSample(sample, 0);
+		   System.out.println(sample[0]);
+		   m_pilot.arcForward(0);
 
-		//EV3TouchSensorTest test = new EV3TouchSensorTest();
-		EV3LargeRegulatedMotor mb = new EV3LargeRegulatedMotor(MotorPort.B) ;
-		EV3TouchSensor ts = new EV3TouchSensor(SensorPort.S2);
+		   while(sample[0]<90){
+			   gyroSamples.fetchSample(sample, 0);
+			   System.out.println(sample[0]);
+		   }
+		   m_pilot.stop();
 		
-		
-		int sp = ts.sampleSize();
-		float [] sample = new float[sp];
-		ts.fetchSample(sample, 0);
-		//lejos.hardware.Button.ENTER.isUp() 
-		
-		while (true){
-			ts.fetchSample(sample, 0);
-
-			if	( sample[0] == 1 ){
-				 	
-					sp = ts.sampleSize();
-					//sample = new float[sp];
-					mb.rotate(1000);
-					LCD.drawString("TEST g  "+sample[0], 0, 0);
-					
-			}
-		}
 	}
 
 }
