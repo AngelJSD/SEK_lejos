@@ -1,0 +1,8 @@
+Pruebas 9 May 2017
+
+Altura: 10 cm aprox.
+Giro: 90 grados antihorario
+1. En algunas pruebas el giroscopio se excede 3 grados en un giro de 90 grados
+2. El giroscopio no debe tener desviación con respecto a la orientacion robot (debe estar recto hacia adelante)
+
+Por hacer: Probar a alturas más bajas.
