@@ -19,7 +19,7 @@ public class GyroSensorMovePilot {
 	   GyroSensorMovePilot test = new GyroSensorMovePilot();
    }
 
-public static void giro90() {
+public static void giro90(int angule, boolean clockwise) {
 
 	   gyroSamples.fetchSample(sample, 0);
 	   System.out.println(sample[0]);
@@ -29,11 +29,18 @@ public static void giro90() {
 	   WheeledChassis chassis = new WheeledChassis(new Wheel[] { wheel1, wheel2 }, WheeledChassis.TYPE_DIFFERENTIAL);
 	   MovePilot pilot = new MovePilot(chassis);
 	   System.out.println("TestChassis");
-	   pilot.rotate(-90);        // degree clockwise
+	   
+	   if(clockwise == true)
+		   pilot.rotate(angule);   // agree clockwise
+
+	   if(clockwise == false)
+		   pilot.rotate(-angule); // degree clockwise
+
 	   gyroSamples.fetchSample(sample, 0);
 	   System.out.println(sample[0]);
-	   while(sample[0]<90){
-		   pilot.rotate(-90 + sample[0]);
+	   
+	   while(sample[0]<angule){
+		   pilot.rotate(-angule + sample[0]);
 		   gyroSamples.fetchSample(sample, 0);
 		   System.out.println(sample[0]);
 	   }
@@ -45,6 +52,6 @@ public static void giro90() {
 	   mB1 = new EV3LargeRegulatedMotor(MotorPort.A);
 	   gs = new EV3GyroSensor(SensorPort.S1);
 	   gyroSamples = gs.getAngleMode();
-	   giro90();
+	   Giro90(180,false);
    }
 }
